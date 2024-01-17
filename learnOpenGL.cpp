@@ -37,6 +37,17 @@ int main()
         glfwTerminate();
         return -1;
     }
+
+    // Get the resolution of the primary monitor
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+    // Calculate the center position
+    int xPos = (mode->width - SCR_WIDTH) / 2;
+    int yPos = (mode->height - SCR_HEIGHT) / 2;
+
+    // Set the window position on the center of the screen
+    glfwSetWindowPos(window, xPos, yPos);
+
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -71,6 +82,16 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
