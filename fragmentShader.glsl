@@ -9,12 +9,15 @@ uniform sampler2D texture2;
 
 uniform vec4 varyingColor;
 
+uniform float mixCoefficient;
+
 void main()
 {
     FragColor = 
     mix(
         texture(texture1, TexCoord), 
-        texture(texture2, TexCoord),0.7
+        texture(texture2, TexCoord),
+        mixCoefficient
     ) 
 //    * vec4(
 //        2*ourColor.x*varyingColor.x/(ourColor.x + varyingColor.x) +1.0, 
