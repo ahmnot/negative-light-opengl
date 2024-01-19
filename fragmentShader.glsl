@@ -14,16 +14,17 @@ uniform float mixCoefficient;
 void main()
 {
     FragColor = 
-    mix(
-        texture(texture1, TexCoord), 
-        texture(texture2, TexCoord),
-        mixCoefficient
-    ) 
-//    * vec4(
-//        2*ourColor.x*varyingColor.x/(ourColor.x + varyingColor.x) +1.0, 
-//        2*ourColor.y*varyingColor.y/(ourColor.y + varyingColor.y) +1.0, 
-//        2*ourColor.z*varyingColor.z/(ourColor.z + varyingColor.z) +1.0, 
-//        1.0f
-//    )
+//    mix(
+//        texture(texture1, TexCoord), 
+//        texture(texture2, TexCoord),
+//        mixCoefficient
+//    ) 
+//    * 
+    vec4(
+        2*(ourColor.x+0.02)*(varyingColor.x)/(ourColor.x + varyingColor.x) +0.65, 
+        2*ourColor.y*varyingColor.y/(ourColor.y + varyingColor.y) +0.65, 
+        2*ourColor.z*varyingColor.z/(ourColor.z + varyingColor.z) +0.65, 
+        1.0f
+    )
     ;
 }
