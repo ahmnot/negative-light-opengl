@@ -23,8 +23,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 const unsigned int SCR_WIDTH = 1000;
 const unsigned int SCR_HEIGHT = 1000;
 
-float mixCoefficient = 0.5f;
-
 glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraDirection = glm::normalize(cameraPosition - cameraTarget);
@@ -333,22 +331,6 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
-
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        mixCoefficient += 0.01f; // change this value accordingly (might be too slow or too fast based on system hardware)
-        if (mixCoefficient >= 1.0f)
-            mixCoefficient = 1.0f;
-    }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        mixCoefficient -= 0.01f; // change this value accordingly (might be too slow or too fast based on system hardware)
-        if (mixCoefficient <= 0.0f)
-            mixCoefficient = 0.0f;
-    }
-
-    float cameraSpeed = static_cast<float>(4.5 * deltaTime);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
