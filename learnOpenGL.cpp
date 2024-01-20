@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <shaderClasses/shader_s.h>
+#include <cameraClasses/camera.h>
 
 #include <iostream>
 #include <cmath>
@@ -15,7 +16,8 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 // settings
 const unsigned int SCR_WIDTH = 1000;
@@ -34,18 +36,17 @@ glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 
 glm::mat4 viewMatrix;
 
+// Camera
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float lastX = SCR_WIDTH / 2, lastY = SCR_HEIGHT / 2;
+bool firstMouse = true;
+
+// Timing
 float deltaTime = 0.0f;	// Time between current frame and last frame
-float lastFrame = 0.0f; // Time of last frame
+float lastFrameTimeValue = 0.0f; // Time of last frame
 
 int main()
 {
-
-    //float yaw = -90.0f;
-    //glm::vec3 direction;
-    //direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    //direction.y = sin(glm::radians(pitch));
-    //direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-
 
     // glfw: initialize and configure
     // ------------------------------
@@ -67,23 +68,22 @@ int main()
         glfwTerminate();
         return -1;
     }
-
-    // Capture mouse cursor
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-
-    // Get the resolution of the primary monitor
-    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-    // Calculate the center position
-    int xPos = (mode->width - SCR_WIDTH) / 2;
-    int yPos = (mode->height - SCR_HEIGHT) / 2;
-
-    // Set the window position on the center of the screen
-    glfwSetWindowPos(window, xPos, yPos);
-
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    // Get the resolution of the primary monitor, calculate the center position, 
+    // set the window position on the center of the screen
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    int xCenterPosition = (mode->width - SCR_WIDTH) / 2;
+    int yCenterPosition = (mode->height - SCR_HEIGHT) / 2;
+    glfwSetWindowPos(window, xCenterPosition, yCenterPosition);
+
+    // Capture mouse cursor
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    // Mouse scroll registration
+    glfwSetScrollCallback(window, scroll_callback);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -237,8 +237,8 @@ int main()
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     ourShader.use();
-    glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0); // set it manually
-    ourShader.setInt("texture2", 1); // or with shader class
+    ourShader.setInt("texture1", 0);
+    ourShader.setInt("texture2", 1);
 
     // render loop
     // -----------
@@ -246,32 +246,20 @@ int main()
     {
         // per-frame time logic
         // --------------------
-        float currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        float currentFrameTimeValue = static_cast<float>(glfwGetTime());
+        deltaTime = currentFrameTimeValue - lastFrameTimeValue;
+        lastFrameTimeValue = currentFrameTimeValue;
 
         // input
         // -----
         processInput(window);
 
-        // render
+        // render (this is the background color)
         // ------
         glClearColor(0.58f, 0.54f, 0.59f, 1.0f);
 
         // clearing the buffers so that the informations of the previous frames don't stay in the buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        double timeValue = glfwGetTime();
-
-
-        // camera variables
-
-        //const float radius = 10.0f;
-        //float camX = sin(glfwGetTime()) * radius;
-        //float camZ = cos(glfwGetTime()) * radius;
-        //cameraPosition = glm::vec3(camX, 0.0, camZ);
-
-        viewMatrix = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 
         // bind textures on corresponding texture units
         glActiveTexture(GL_TEXTURE0);
@@ -282,52 +270,35 @@ int main()
         // render the triangle
         ourShader.use();
 
-        //glm::mat4 transform = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-        //transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-        //transform = glm::rotate(transform, (float)timeValue, glm::vec3(0.0f, 0.0f, 1.0f));
-        float redValue = static_cast<float>(sin(timeValue * 3.5 ) / 2.0 + 0.5);
-        float greenValue = static_cast<float>(sin(timeValue * 1.5) / 2.0 + 0.5);
-        float blueValue = static_cast<float>(sin(timeValue * 2.5) / 2.0 + 0.5);
-
-        // update shader uniform
-        ourShader.setFloat4f("varyingColor", redValue, greenValue, blueValue, 1.0f);
-
-        ourShader.setFloat("mixCoefficient", mixCoefficient);
-
-        glm::mat4 modelMatrix = glm::mat4(1.0f);
         //glm::mat4 viewMatrix = glm::mat4(1.0f);
         glm::mat4 projectionMatrix = glm::mat4(1.0f);
-
-        modelMatrix = glm::rotate(modelMatrix, (float)timeValue * glm::radians(45.0f), glm::vec3(0.7f, 1.0f, 0.2f));
-        // note that we're translating the scene in the reverse direction of where we want to move
-        //viewMatrix = glm::translate(viewMatrix, glm::vec3(0.0f, 0.0f, -8.0f));
-        projectionMatrix = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-
-        ourShader.setMat4("modelMatrix", modelMatrix);
-        ourShader.setMat4("viewMatrix", viewMatrix);
+        
+        // pass projection matrix to shader (note that in this case it could change every frame)
+        projectionMatrix = glm::perspective(glm::radians(camera.FieldOfView), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         ourShader.setMat4("projectionMatrix", projectionMatrix);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        // render the triangles
-        glBindVertexArray(VAO);
+        // camera/view transformation
+        viewMatrix = camera.GetViewMatrix();
+        ourShader.setMat4("viewMatrix", viewMatrix);
 
+        // render the cube triangles
+        glBindVertexArray(VAO);
         for (unsigned int i = 0; i < 10; i++)
         {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            model = glm::rotate(model, (float)timeValue * glm::radians(45.0f), glm::vec3(0.7f, 1.0f, 0.2f));
+            glm::mat4 modelMatrix = glm::mat4(1.0f);
+            modelMatrix = glm::translate(modelMatrix, cubePositions[i]);
+            modelMatrix = glm::rotate(modelMatrix, currentFrameTimeValue * glm::radians(45.0f), glm::vec3(0.5f, 1.0f, 0.2f));
 
             float angle = 20.0f * i;
             if(i%3)
-                model = glm::rotate(model, glm::radians(-angle), glm::vec3(1.0f, 0.0f, 0.5f));
+                modelMatrix = glm::rotate(modelMatrix, glm::radians(-angle), glm::vec3(1.0f, 0.0f, 0.5f));
             else
-                model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            ourShader.setMat4("modelMatrix", model);
+                modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            ourShader.setMat4("modelMatrix", modelMatrix);
 
-            float redValue = static_cast<float>(sin(timeValue * 3.5 * (i + 0.1)/3) / 2.0 + 0.5);
-            float greenValue = static_cast<float>(sin(timeValue * 1.5 * (i + 0.1)/3) / 2.0 + 0.5);
-            float blueValue = static_cast<float>(sin(timeValue * 2.5 * (i + 0.1)/3) / 2.0 + 0.5);
+            float redValue = static_cast<float>(sin(currentFrameTimeValue * 3.5 * (i + 0.1)/3) / 2.0 + 0.5);
+            float greenValue = static_cast<float>(sin(currentFrameTimeValue * 1.5 * (i + 0.1)/3) / 2.0 + 0.5);
+            float blueValue = static_cast<float>(sin(currentFrameTimeValue * 2.5 * (i + 0.1)/3) / 2.0 + 0.5);
 
             // update shader uniform
             ourShader.setFloat4f("varyingColor", redValue, greenValue, blueValue, 1.0f);
@@ -335,13 +306,7 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }        
         
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        //transform = glm::mat4(1.0f);
-        //transform = glm::translate(transform, glm::vec3(-0.5f, 0.5f, 0.0f));
-        //float scaleAmount = static_cast<float>(sin(glfwGetTime()));
-        //transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
-        //glUniformMatrix4fv(transformLoc, 1, GL_FALSE, &transform[0][0]);
+        // This is when using an EBO:
         //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -366,7 +331,6 @@ int main()
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
 {
-
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
@@ -384,17 +348,47 @@ void processInput(GLFWwindow* window)
             mixCoefficient = 0.0f;
     }
 
-    float cameraSpeed = static_cast<float>(2.5 * deltaTime);
+    float cameraSpeed = static_cast<float>(4.5 * deltaTime);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPosition += cameraSpeed * cameraFront;
+        camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPosition -= cameraSpeed * cameraFront;
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        camera.ProcessKeyboard(RIGHT, deltaTime);
 
+}
+
+// glfw: whenever the mouse moves, this callback is called
+// -------------------------------------------------------
+void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+{
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
+
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+// glfw: whenever the mouse scroll wheel scrolls, this callback is called
+// ----------------------------------------------------------------------
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

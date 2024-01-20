@@ -141,6 +141,8 @@
     <None Include="vertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\cameraClasses\camera.h" />
+    <ClInclude Include="Include\shaderClasses\shader_s.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
