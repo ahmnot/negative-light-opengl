@@ -99,12 +99,12 @@ int main()
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions          // colors           // texture coords
-        -0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,    0.0f, 0.0f, 1.0f,     1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,    0.0f, 0.0f, 1.0f,     1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,    1.0f, 0.0f, 0.0f,     0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,    1.0f, 1.0f, 0.0f,     1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,    0.0f, 1.0f, 1.0f,     1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,    0.0f, 1.0f, 1.0f,     1.0f, 1.0f,
         -0.5f,  0.5f, -0.5f,    0.0f, 1.0f, 0.0f,	  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,    1.0f, 0.0f, 0.0f,     0.0f, 0.0f,
 
         -0.5f, -0.5f,  0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 0.0f,
          0.5f, -0.5f,  0.5f,    0.0f, 1.0f, 0.0f,     1.0f, 0.0f,
@@ -115,27 +115,27 @@ int main()
 
         -0.5f,  0.5f,  0.5f,    0.0f, 1.0f, 0.0f,     1.0f, 0.0f,
         -0.5f,  0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,    1.0f, 0.0f, 0.0f,     0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,    1.0f, 0.0f, 0.0f,     0.0f, 1.0f,
         -0.5f, -0.5f,  0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 0.0f,
         -0.5f,  0.5f,  0.5f,    0.0f, 1.0f, 0.0f,     1.0f, 0.0f,
 
          0.5f,  0.5f,  0.5f,    0.0f, 0.0f, 1.0f,     1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,    0.0f, 0.0f, 1.0f,     1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,    0.0f, 1.0f, 1.0f,     1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,    1.0f, 1.0f, 0.0f,     0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,    1.0f, 1.0f, 0.0f,     0.0f, 1.0f,
          0.5f, -0.5f,  0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 0.0f,
          0.5f,  0.5f,  0.5f,    0.0f, 0.0f, 1.0f,     1.0f, 0.0f,
 
-        -0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,    1.0f, 0.0f, 0.0f,     0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,    1.0f, 1.0f, 0.0f,     1.0f, 1.0f,
          0.5f, -0.5f,  0.5f,    0.0f, 1.0f, 0.0f,     1.0f, 0.0f,
          0.5f, -0.5f,  0.5f,    0.0f, 1.0f, 0.0f,     1.0f, 0.0f,
         -0.5f, -0.5f,  0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,    1.0f, 0.0f, 0.0f,     0.0f, 1.0f,
 
         -0.5f,  0.5f, -0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,    0.0f, 0.0f, 1.0f,     1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,    0.0f, 1.0f, 1.0f,     1.0f, 1.0f,
          0.5f,  0.5f,  0.5f,    0.0f, 0.0f, 1.0f,     1.0f, 0.0f,
          0.5f,  0.5f,  0.5f,    0.0f, 0.0f, 1.0f,     1.0f, 0.0f,
         -0.5f,  0.5f,  0.5f,    0.0f, 1.0f, 0.0f,     0.0f, 0.0f,
@@ -294,9 +294,9 @@ int main()
                 modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             ourShader.setMat4("modelMatrix", modelMatrix);
 
-            float redValue = static_cast<float>(sin(currentFrameTimeValue * 3.5 * (i + 0.1)/3) / 2.0 + 0.5);
-            float greenValue = static_cast<float>(sin(currentFrameTimeValue * 1.5 * (i + 0.1)/3) / 2.0 + 0.5);
-            float blueValue = static_cast<float>(sin(currentFrameTimeValue * 2.5 * (i + 0.1)/3) / 2.0 + 0.5);
+            float redValue = static_cast<float>(sin(currentFrameTimeValue * 3.5 * (i + 0.1)/3) / 3.0 + 0.6);
+            float greenValue = static_cast<float>(sin(currentFrameTimeValue * 1.5 * (i + 0.1)/3) / 3.0 + 0.6);
+            float blueValue = static_cast<float>(sin(currentFrameTimeValue * 2.5 * (i + 0.1)/3) / 3.0 + 0.6);
 
             // update shader uniform
             ourShader.setFloat4f("varyingColor", redValue, greenValue, blueValue, 1.0f);
