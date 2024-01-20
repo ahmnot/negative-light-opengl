@@ -26,10 +26,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vertexShader.glsl" />
-    <None Include="fragmentShader.glsl" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="stb_image.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
@@ -39,5 +35,11 @@
     <ClInclude Include="Include\shaderClasses\shader_s.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\colorsVertexShader.glsl" />
+    <None Include="shaders\lightCubeVertexShader.glsl" />
+    <None Include="shaders\colorsFragmentShader.glsl" />
+    <None Include="shaders\lightCubeFragmentShader.glsl" />
   </ItemGroup>
 </Project>
