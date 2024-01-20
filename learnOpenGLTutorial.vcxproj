@@ -24,6 +24,7 @@
     <ProjectGuid>{6e52e0de-1643-4792-8f62-67ef0321220b}</ProjectGuid>
     <RootNamespace>learnOpenGLTutorial</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>learnOpenGL-gettingstarted</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -71,8 +72,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\projets-visualstudio\learnOpenGLTutorial\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\projets-visualstudio\learnOpenGLTutorial\Libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\projets-visualstudio\learnOpenGL-gettingstarted\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\projets-visualstudio\learnOpenGL-gettingstarted\Libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
