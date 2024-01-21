@@ -37,9 +37,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\colorsVertexShader.glsl" />
-    <None Include="shaders\lightCubeVertexShader.glsl" />
-    <None Include="shaders\colorsFragmentShader.glsl" />
-    <None Include="shaders\lightCubeFragmentShader.glsl" />
+    <None Include="shaders\mainCubeVertexShader.glsl" />
+    <None Include="shaders\mainCubeFragmentShader.glsl" />
+    <None Include="shaders\lampCubeFragmentShader.glsl" />
+    <None Include="shaders\lampCubeVertexShader.glsl" />
   </ItemGroup>
 </Project>

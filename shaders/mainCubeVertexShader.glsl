@@ -17,7 +17,7 @@ void main()
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(positionAttribute, 1.0);
 
     FragmentPosition = vec3(viewMatrix * modelMatrix * vec4(positionAttribute, 1.0));
-    NormalVector = mat3(transpose(inverse(viewMatrix * modelMatrix))) * normalVectorAttribute;  
+    NormalVector = normalize(mat3(transpose(inverse(viewMatrix * modelMatrix))) * normalVectorAttribute);  
     LightPosition = vec3(viewMatrix * vec4(lightPosition, 1.0)); // Transform world-space light position to view-space light position
 
 } 

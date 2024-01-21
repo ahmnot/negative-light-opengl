@@ -143,8 +143,8 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\colorsFragmentShader.glsl" />
-    <None Include="shaders\colorsVertexShader.glsl" />
+    <None Include="shaders\mainCubeFragmentShader.glsl" />
+    <None Include="shaders\mainCubeVertexShader.glsl" />
     <None Include="shaders\lampCubeFragmentShader.glsl" />
     <None Include="shaders\lampCubeVertexShader.glsl" />
   </ItemGroup>

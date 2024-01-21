@@ -28,14 +28,11 @@ float lastX = SCR_WIDTH / 2, lastY = SCR_HEIGHT / 2;
 bool firstMouse = true;
 
 // Timing
-float deltaTime = 0.0f;	// Time between current frame and last frame
-float lastFrameTimeValue = 0.0f; // Time of last frame
+double deltaTime = 0.0;	// Time between current frame and last frame
+double lastFrameTimeValue = 0.0; // Time of last frame
 
 // lighting
 glm::vec3 lightPosition(1.2f, 1.0f, 2.0f);
-
-// stores how much we're seeing of either texture
-float lightValue = 1.0f;
 
 // Rotation parameters
 const float orbitRadius = 2.0f;
@@ -93,7 +90,7 @@ int main()
 
     // build and compile our shader program
     // ------------------------------------
-    Shader lightingShader("shaders/colorsVertexShader.glsl", "shaders/colorsFragmentShader.glsl");
+    Shader lightingShader("shaders/mainCubeVertexShader.glsl", "shaders/mainCubeFragmentShader.glsl");
     Shader lampCubeShader("shaders/lampCubeVertexShader.glsl", "shaders/lampCubeFragmentShader.glsl");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -169,15 +166,36 @@ int main()
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    // FPS calculation variables
+    double lastTimeForFPS = glfwGetTime();
+    double deltaTimeForFPS = 0.0;
+    int nbFrames = 0;
+
+    glm::vec3 lightColor{};
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
         // per-frame time logic
         // --------------------
-        float currentFrameTimeValue = static_cast<float>(glfwGetTime());
+        double currentFrameTimeValue = glfwGetTime();
         deltaTime = currentFrameTimeValue - lastFrameTimeValue;
         lastFrameTimeValue = currentFrameTimeValue;
+
+        deltaTimeForFPS = currentFrameTimeValue - lastTimeForFPS;
+        nbFrames++;
+        if (deltaTimeForFPS >= 0.1) {
+            // Calculate FPS (frames per second)
+            double fps = nbFrames / deltaTimeForFPS;
+
+            // Print FPS to the same line with a carriage return and flush the stream
+            std::cout << "\r" << "FPS: " << fps << std::flush;
+
+            // Reset frame count and update the last time
+            nbFrames = 0;
+            lastTimeForFPS = currentFrameTimeValue;
+        }
 
         // input
         // -----
@@ -190,18 +208,33 @@ int main()
 
 
         // Update light position to rotate around the central cube
-        //float angle = glfwGetTime() * rotationSpeed;
-        //lightPosition.x = sin(angle) * orbitRadius;
-        //lightPosition.z = cos(angle) * orbitRadius;
-        glm::vec3 lightPosition(1.2f, 1.0f, 2.0f);
+        float angle = glfwGetTime() * rotationSpeed;
+        lightPosition.x = sin(angle) * orbitRadius;
+        lightPosition.z = cos(angle) * orbitRadius;
 
 
         // be sure to activate shader when setting uniforms/drawing objects
         lightingShader.use();
         lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        lightingShader.setVec3("lightColor", lightValue, lightValue, lightValue);
         lightingShader.setVec3("lightPosition", lightPosition);
         lightingShader.setVec3("viewPosition", camera.Position);
+
+        //material properties
+        lightingShader.setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+        lightingShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+        lightingShader.setFloat("material.shininess", 32.0f);
+
+        lightColor.x = sin(glfwGetTime() * 2.0f);
+        lightColor.y = sin(glfwGetTime() * 0.7f);
+        lightColor.z = sin(glfwGetTime() * 1.3f);
+
+        glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+        glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+        lightingShader.setVec3("lightProperties.ambient", ambientColor);
+        lightingShader.setVec3("lightProperties.diffuse", diffuseColor); // darken diffuse light a bit
+        lightingShader.setVec3("lightProperties.specular", 1.0f, 1.0f, 1.0f);
 
         // view/projection transformations
         glm::mat4 projectionMatrix = glm::perspective(glm::radians(camera.FieldOfView), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -227,7 +260,7 @@ int main()
         modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f)); // a smaller cube
         lampCubeShader.setMat4("modelMatrix", modelMatrix);
         
-        lampCubeShader.setVec3("lightCubeColor", lightValue, lightValue, lightValue);
+        lampCubeShader.setVec3("lightCubeColor", lightColor.x, lightColor.y, lightColor.z);
 
         glBindVertexArray(lightCubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -265,19 +298,6 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
-
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        lightValue += 0.05f; // change this value accordingly (might be too slow or too fast based on system hardware)
-        if (lightValue >= 1.0f)
-            lightValue = 1.0f;
-    }
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        lightValue -= 0.05f; // change this value accordingly (might be too slow or too fast based on system hardware)
-        if (lightValue <= 0.0f)
-            lightValue = 0.0f;
-    }
 
 }
 
