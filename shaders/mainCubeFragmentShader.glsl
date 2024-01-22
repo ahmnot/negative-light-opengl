@@ -17,9 +17,15 @@ struct Material {
 uniform Material material;
 
 struct LightProperties {
+    vec3 direction;
+
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+	
+    float attenuationConstantTerm;
+    float attenuationLinearTerm;
+    float attenuationQuadraticTerm;
 };
 
 uniform LightProperties lightProperties;  
@@ -45,6 +51,18 @@ void main()
     vec3 emissionMap = texture(material.emissionMap, TextureCoordinates).rgb;
     vec3 emissionMask = step(vec3(1.0f), vec3(1.0f)-specularMap);
     vec3 emissionColor = vec3(0.0f);// = emissionMap * emissionMask;
+
+    
+    float lightFragmentdistance = length(LightPosition - FragmentPosition);
+    float attenuation = 1.0 / 
+    (lightProperties.attenuationConstantTerm 
+    + lightProperties.attenuationLinearTerm * lightFragmentdistance 
+    + lightProperties.attenuationQuadraticTerm * (lightFragmentdistance * lightFragmentdistance)); 
+    
+    // If you want "negative light" to work better with attenuation, better comment this line:
+    //ambientLightingColor *= attenuation;
+    diffuseColor *= attenuation;
+    specularColor *= attenuation;
    
     // By replacing the "+" by "-", we make this "negative light".
     FragmentColor = vec4(ambientLightingColor - diffuseColor - specularColor + emissionColor, 1.0);
