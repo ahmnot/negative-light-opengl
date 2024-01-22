@@ -32,19 +32,20 @@ void main()
     // Diffuse Lighting
     vec3 lightDirection = normalize(LightPosition - FragmentPosition); 
     float diffuseQuantity = max(dot(NormalVector, lightDirection), 0.0);
-    vec3 diffuseColor = -lightProperties.diffuse * diffuseQuantity * (texture(material.diffuseMap, TextureCoordinates).rgb);
+    vec3 diffuseColor = lightProperties.diffuse * diffuseQuantity * (texture(material.diffuseMap, TextureCoordinates).rgb);
 
     // Specular Lighting
     vec3 viewDirection = normalize(- FragmentPosition);
     vec3 reflectDirection = reflect(-lightDirection, NormalVector);  
     float specularPower = pow(max(dot(viewDirection, reflectDirection), 0.0), material.shininess);
     vec3 specularMap = texture(material.specularMap, TextureCoordinates).rgb;
-    vec3 specularColor = -lightProperties.specular * specularPower * specularMap;
+    vec3 specularColor = lightProperties.specular * specularPower * specularMap;
 
     // Emission map with emission mask (for the box borders) */
     vec3 emissionMap = texture(material.emissionMap, TextureCoordinates).rgb;
     vec3 emissionMask = step(vec3(1.0f), vec3(1.0f)-specularMap);
     vec3 emissionColor = vec3(0.0f);// = emissionMap * emissionMask;
    
-    FragmentColor = vec4(ambientLightingColor + diffuseColor + specularColor + emissionColor, 1.0);
+    // By replacing the "+" by "-", we make this "negative light".
+    FragmentColor = vec4(ambientLightingColor - diffuseColor - specularColor + emissionColor, 1.0);
 }
