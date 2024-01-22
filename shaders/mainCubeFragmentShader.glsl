@@ -1,25 +1,22 @@
 #version 330 core
-out vec4 FragColor;
+out vec4 FragmentColor;
 
 in vec3 FragmentPosition;  
 in vec3 NormalVector;  
 in vec3 LightPosition;   // extra in variable, since we need the light position in view space we calculate this in the vertex shader
 
-//uniform vec3 viewPosition; 
-uniform vec3 objectColor;
+in vec2 TextureCoordinates;
 
 struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-    float shininess;
+    sampler2D diffuseMap;
+    sampler2D specularMap;
+    sampler2D emissionMap;
+    float     shininess;
 }; 
   
 uniform Material material;
 
 struct LightProperties {
-    vec3 position;
-  
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -30,25 +27,24 @@ uniform LightProperties lightProperties;
 void main()
 {
     // Ambient Lighting
-    vec3 ambientLightingColor = material.ambient * lightProperties.ambient;
+    vec3 ambientLightingColor = lightProperties.ambient * (texture(material.diffuseMap, TextureCoordinates).rgb);
 
     // Diffuse Lighting
     vec3 lightDirection = normalize(LightPosition - FragmentPosition); 
     float diffuseQuantity = max(dot(NormalVector, lightDirection), 0.0);
-    vec3 diffuseColor = (diffuseQuantity * material.diffuse) * lightProperties.diffuse;
+    vec3 diffuseColor = -lightProperties.diffuse * diffuseQuantity * (texture(material.diffuseMap, TextureCoordinates).rgb);
 
     // Specular Lighting
-    float specularStrength = 0.5;
     vec3 viewDirection = normalize(- FragmentPosition);
     vec3 reflectDirection = reflect(-lightDirection, NormalVector);  
     float specularPower = pow(max(dot(viewDirection, reflectDirection), 0.0), material.shininess);
-    vec3 specularColor = (specularPower * material.specular) * lightProperties.specular;  
+    vec3 specularMap = texture(material.specularMap, TextureCoordinates).rgb;
+    vec3 specularColor = -lightProperties.specular * specularPower * specularMap;
 
-    vec3 result = (
-    ambientLightingColor 
-    + diffuseColor 
-    + specularColor
-    ) 
-    * objectColor;
-    FragColor = vec4(result, 1.0);
+    // Emission map with emission mask (for the box borders) */
+    vec3 emissionMap = texture(material.emissionMap, TextureCoordinates).rgb;
+    vec3 emissionMask = step(vec3(1.0f), vec3(1.0f)-specularMap);
+    vec3 emissionColor = vec3(0.0f);// = emissionMap * emissionMask;
+   
+    FragmentColor = vec4(ambientLightingColor + diffuseColor + specularColor + emissionColor, 1.0);
 }
