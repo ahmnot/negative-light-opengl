@@ -32,6 +32,7 @@ uniform LightProperties lightProperties;
 
 void main()
 {
+
     // Ambient Lighting
     vec3 ambientLightingColor = lightProperties.ambient * (texture(material.diffuseMap, TextureCoordinates).rgb);
 

@@ -22,4 +22,5 @@ void main()
     NormalVector = normalize(mat3(transpose(inverse(viewMatrix * modelMatrix))) * normalVectorAttribute);  
     LightPosition = vec3(viewMatrix * vec4(lightPosition, 1.0)); // Transform world-space light position to view-space light position
     TextureCoordinates = textureCoordinatesAttribute;
+
 } 
