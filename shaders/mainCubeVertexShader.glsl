@@ -8,7 +8,12 @@ out vec3 NormalVector;
 out vec3 LightPosition;
 out vec2 TextureCoordinates;
 
-uniform vec3 lightPosition; // we define the uniform in the vertex shader and pass the 'view space' lightpos to the fragment shader. lightPos is currently in world space.
+ /**
+  We define the uniform lightPosition in the vertex shader, 
+  and pass the 'view space' lightPosition to the fragment shader. 
+  lightPosition is currently in world space.
+ */
+uniform vec3 lightPosition; 
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;

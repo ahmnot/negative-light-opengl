@@ -243,18 +243,18 @@ int main()
 
         // be sure to activate shader when setting uniforms/drawing objects
         lightingShader.use();
-        //lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        // lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         lightingShader.setVec3("lightPosition", lightAndLampPosition);
         lightingShader.setVec3("viewPosition", camera.Position);
 
-        //material properties
+        // material properties
         lightingShader.setFloat("material.shininess", 32.0f);
 
         lightColor = glm::vec3(1.0);
 
-        // Change the coefficients to * 1.0 in order for the negative light effect to be better.
+        // The coefficients have to be * 1.0 or more in order for the negative light effect to work.
         lightingShader.setVec3("lightProperties.ambient", lightColor * 1.0f);
-        lightingShader.setVec3("lightProperties.diffuse", lightColor * 1.2f);
+        lightingShader.setVec3("lightProperties.diffuse", lightColor * 1.5f);
         lightingShader.setVec3("lightProperties.specular", lightColor * 1.0f);
         lightingShader.setVec3("lightProperties.direction", -0.2f, -1.0f, -0.3f);
 

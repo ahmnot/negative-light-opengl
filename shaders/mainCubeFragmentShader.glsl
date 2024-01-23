@@ -33,8 +33,16 @@ uniform LightProperties lightProperties;
 void main()
 {
 
+    /**
+    If you want "negative light" to work better, 
+    it is better to have a strong ambient lighting. 
+    "negative light" is not directly related to ambient light,
+    but you want your scene to be fully lit or at least partially lit, 
+    and then "substract light" (="substract color") from it.
+    */
+
     // Ambient Lighting
-    vec3 ambientLightingColor = lightProperties.ambient * (texture(material.diffuseMap, TextureCoordinates).rgb);
+    vec3 ambientColor = lightProperties.ambient * (texture(material.diffuseMap, TextureCoordinates).rgb);
 
     // Diffuse Lighting
     vec3 lightDirection = normalize(LightPosition - FragmentPosition); 
@@ -42,29 +50,30 @@ void main()
     vec3 diffuseColor = lightProperties.diffuse * diffuseQuantity * (texture(material.diffuseMap, TextureCoordinates).rgb);
 
     // Specular Lighting
-    vec3 viewDirection = normalize(- FragmentPosition);
+    /** 
+    When calculating light position in the vertex shader, in view space, 
+    we can put (0,0,0) instead of viewPosition.
+    */
+    vec3 viewDirection = normalize(/* (0,0,0) */ - FragmentPosition);
     vec3 reflectDirection = reflect(-lightDirection, NormalVector);  
     float specularPower = pow(max(dot(viewDirection, reflectDirection), 0.0), material.shininess);
     vec3 specularMap = texture(material.specularMap, TextureCoordinates).rgb;
     vec3 specularColor = lightProperties.specular * specularPower * specularMap;
 
-    // Emission map with emission mask (for the box borders) */
-    vec3 emissionMap = texture(material.emissionMap, TextureCoordinates).rgb;
-    vec3 emissionMask = step(vec3(1.0f), vec3(1.0f)-specularMap);
-    vec3 emissionColor = vec3(0.0f);// = emissionMap * emissionMask;
-
-    
     float lightFragmentdistance = length(LightPosition - FragmentPosition);
     float attenuation = 1.0 / 
     (lightProperties.attenuationConstantTerm 
     + lightProperties.attenuationLinearTerm * lightFragmentdistance 
     + lightProperties.attenuationQuadraticTerm * (lightFragmentdistance * lightFragmentdistance)); 
     
-    // If you want "negative light" to work better with attenuation, better comment this line:
-    //ambientLightingColor *= attenuation;
+    // "negative light" works better with no attenuation on the ambient.
+    //ambientColor *= attenuation;
     diffuseColor *= attenuation;
     specularColor *= attenuation;
    
-    // By replacing the "+" by "-", we make this "negative light".
-    FragmentColor = vec4(ambientLightingColor - diffuseColor - specularColor + emissionColor, 1.0);
+    /**
+    By replacing the "+" by "-", we make this "negative light".
+    We SUBSTRACT the diffuseColor and specularColor from the ambientColor.
+    */
+    FragmentColor = vec4(ambientColor - diffuseColor - specularColor, 1.0);
 }
