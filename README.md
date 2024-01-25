@@ -4,5 +4,5 @@ A Phong-based negative light in OpenGL (made with learnOpenGL).
 
 https://github.com/ahmnot/negative-light-opengl/assets/16052099/81b5d511-06fa-45be-9a59-a11474da0c0f
 
-https://github.com/ahmnot/negative-light-opengl/assets/16052099/a9d13c4b-7ae3-4aad-bd57-e672ddb885c6
+https://github.com/ahmnot/negative-light-opengl/assets/16052099/ffa350ff-3edf-4045-8944-e8962a81d030
 
